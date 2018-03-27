@@ -403,6 +403,6 @@ class AutoPEP8(SpyderPluginMixin):  # pylint: disable=R0904
         cursor.setPosition(position_start, QTextCursor.MoveAnchor)
         cursor.setPosition(position_end, QTextCursor.KeepAnchor)
         editor.setTextCursor(cursor)
-        
+
         self.main.statusBar().showMessage(
             _("Autopep8 finished!"))
