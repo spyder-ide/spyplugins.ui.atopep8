@@ -19,6 +19,7 @@ Description
 -----------
 
 This is a plugin to run the `autopep8 <https://pypi.python.org/pypi/autopep8>`_ python linter from within the python IDE `spyder <https://github.com/spyder-ide/spyder>`_.
+Optionally, docstrings are autoformatted using python `docformatter <https://github.com/myint/docformatter>`_.
 
 
 Important Announcement: Spyder is unfunded!
@@ -57,6 +58,7 @@ Requirements
 
   spyder
   autopep8
+  docformatter
 
 
 Install instructions
@@ -77,6 +79,8 @@ Press Shift+F8 (default) to run autopep8 on the current file or go to ``Source >
 If some text is selected, autopep8 will run on this text only.
 
 Informations about the execution will be displayed in the statusbar.
+
+Additional formatting of docstrings can be enabled in the settings via ``Tools > Preferences > Autopep8 > docformatter``.
 
 Screenshot
 ----------

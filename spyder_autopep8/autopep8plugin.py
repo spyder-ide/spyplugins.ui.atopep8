@@ -13,7 +13,6 @@ from __future__ import (absolute_import, division, print_function,
 ERR_MSG = ''
 try:
     import autopep8
-
     try:
         FIX_LIST = [(code.strip(), description.strip())
                     for code, description in autopep8.supported_fixes()]
@@ -22,6 +21,13 @@ try:
         ERR_MSG = "Please install autopep8 >= 1.0, and pep8 >= 1.4.2."
 except ImportError:
     ERR_MSG = "Please install autopep8 >= 1.0, and pep8 >= 1.4.2."
+
+# Third party imports
+ERR_MSG = ''
+try:
+    import docformatter
+except ImportError:
+    ERR_MSG = "Please install docformatter >= 1.0."
 
 from qtpy.QtWidgets import (QWidget, QVBoxLayout, QGroupBox,
                             QScrollArea, QLabel, QCheckBox)
@@ -172,6 +178,17 @@ class AutoPEP8ConfigPage(PluginConfigPage):
             aggressive2_label.setEnabled)
         aggressive2_checkbox.setEnabled(aggressive1_checkbox.isChecked())
         aggressive2_label.setEnabled(aggressive1_checkbox.isChecked())
+        
+        # docformatter option
+        docformatter_checkbox = self.create_checkbox(
+            "docformatter", "docformatter", default=True)
+        docformatter_label = QLabel(_(
+            "Use docformatter to format docstrings according to PEP257."))
+        docformatter_label.setWordWrap(True)
+        docformatter_label.setIndent(indent)
+        font_description = docformatter_label.font()
+        font_description.setPointSizeF(font_description.pointSize() * 0.9)
+        docformatter_label.setFont(font_description)
 
         # Enable/disable error codes
         fix_layout = QVBoxLayout()
@@ -240,6 +257,8 @@ class AutoPEP8ConfigPage(PluginConfigPage):
         options_layout.addWidget(aggressive1_checkbox)
         options_layout.addWidget(aggressive1_label)
         options_layout.addLayout(aggressive2_layout)
+        options_layout.addWidget(docformatter_checkbox)
+        options_layout.addWidget(docformatter_label)
         options_group.setLayout(options_layout)
 
         widget_scroll = QWidget()
@@ -353,6 +372,13 @@ class AutoPEP8(SpyderPluginMixin):  # pylint: disable=R0904
         # replace(): See qt doc for QTextCursor.selectedText()
         text_before = to_text_string(
             cursor.selectedText().replace("\u2029", "\n"))
+            
+        # Apply docformatter
+        if self.get_option("docformatter", True):
+            text_before = docformatter.format_code(text_before)
+            self.main.statusBar().showMessage(
+              _("Applying docformatter."))
+        
 
         # Run autopep8
         line_length = self.main.window().editor.get_option("edge_line_column")
@@ -377,6 +403,6 @@ class AutoPEP8(SpyderPluginMixin):  # pylint: disable=R0904
         cursor.setPosition(position_start, QTextCursor.MoveAnchor)
         cursor.setPosition(position_end, QTextCursor.KeepAnchor)
         editor.setTextCursor(cursor)
-
+        
         self.main.statusBar().showMessage(
-            _("Autopep8 finished !"))
+            _("Autopep8 finished!"))

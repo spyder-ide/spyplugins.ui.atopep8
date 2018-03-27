@@ -50,7 +50,7 @@ setup(
     version=get_version(),
     packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
     package_data={LIBNAME: get_package_data(LIBNAME, EXTLIST)},
-    keywords=["Qt PyQt4 PyQt5 PySide spyder plugins spyplugins autopep8 pep8"],
+    keywords=["Qt PyQt4 PyQt5 PySide spyder plugins spyplugins autopep8 pep8 docformatter"],
     install_requires=REQUIREMENTS,
     url='https://github.com/spyder-ide/spyder.autopep8',
     license='MIT',

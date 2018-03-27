@@ -16,3 +16,5 @@ Joseph Martinot-Lagarde ([@Nodd](http://github.com/Nodd))
 Gonzalo Peña-Castellanos ([@goanpeca](http://github.com/goanpeca))
 
 Steven Silvester ([@blink1073](http://github.com/blink1073))
+
+David Breuer ([@blink1073](http://github.com/DavidBreuer))
