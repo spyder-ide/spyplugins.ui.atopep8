@@ -37,3 +37,6 @@ nosetests.xml
 # Temp files
 *.swp
 *.directory
+
+# OSX files
+.DS_Store

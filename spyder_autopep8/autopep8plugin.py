@@ -27,12 +27,16 @@ from qtpy.QtWidgets import (QWidget, QVBoxLayout, QGroupBox,
                             QScrollArea, QLabel, QCheckBox)
 from qtpy.QtGui import QTextCursor
 
+# Spyder imports
+from spyder.api.plugins import SpyderPluginWidget
+from spyder.api.preferences import PluginConfigPage
 from spyder.config.base import get_translation
-from spyder.config.gui import fixed_shortcut
-from spyder.plugins import SpyderPluginMixin
-from spyder.plugins.configdialog import PluginConfigPage
+from spyder.config.manager import CONF
 from spyder.utils.qthelpers import get_icon, create_action
 from spyder.utils import icon_manager as ima
+
+# Local imports
+from spyder_autopep8.config import CONF_DEFAULTS
 
 try:
     from spyder.py3compat import to_text_string
@@ -263,14 +267,21 @@ class DummyDock(object):
     def close(self):
         pass
 
+    def isFloating(self):
+        return False
 
-class AutoPEP8(SpyderPluginMixin):  # pylint: disable=R0904
+    def setTitleBarWidget(self, widget):
+        pass
+
+
+class AutoPEP8(SpyderPluginWidget):  # pylint: disable=R0904
     """Python source code automatic formatting based on autopep8.
 
     QObject is needed to register the action.
     """
     CONF_SECTION = "spyder.autopep8"
     CONFIGWIDGET_CLASS = AutoPEP8ConfigPage
+    CONF_DEFAULTS = CONF_DEFAULTS
 
     def __init__(self, main):
         super(AutoPEP8, self).__init__(main)
@@ -288,11 +299,17 @@ class AutoPEP8(SpyderPluginMixin):  # pylint: disable=R0904
     def register_plugin(self):
         """Register plugin in Spyder's main window."""
         autopep8_act = create_action(
-            self.main, _("Run autopep8 code autoformatting"),
+            self.main,
+            _("Run autopep8 code autoformatting"),
             icon=self.get_plugin_icon(),
-            triggered=self.run_autopep8)
-        fixed_shortcut("Shift+F8", self.main,
-                       self.run_autopep8)
+            triggered=self.run_autopep8,
+        )
+        self.register_shortcut(
+            autopep8_act,
+            context="spyder.autopep8",
+            name="Run",
+            add_shortcut_to_tip=True,
+        )
         self.main.source_menu_actions += [None, autopep8_act]
         self.main.editor.pythonfile_dependent_actions += [autopep8_act]
 
@@ -307,6 +324,7 @@ class AutoPEP8(SpyderPluginMixin):  # pylint: disable=R0904
     # --- Public API ---------------------------------------------------------
     def run_autopep8(self):
         """Format code with autopep8."""
+        print('HELLO!')
         if ERR_MSG:
             self.main.statusBar().showMessage(
                 _("Unable to run: {0}".format(ERR_MSG)))
@@ -355,7 +373,7 @@ class AutoPEP8(SpyderPluginMixin):  # pylint: disable=R0904
             cursor.selectedText().replace("\u2029", "\n"))
 
         # Run autopep8
-        line_length = self.main.window().editor.get_option("edge_line_column")
+        line_length = self.main.window().editor.get_option("edge_line_columns")[0]
         options = ["", "--ignore", ",".join(ignore),
                    "--pep8-passes", str(self.get_option("passes", 0) - 1),
                    "--max-line-length", str(line_length)]
